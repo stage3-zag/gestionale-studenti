@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 const corsoConfig = {
@@ -112,22 +112,31 @@ export default function ListaStudenti({ studenti, setStudenti, dark, toggleDark 
     else { setOrdinamento(campo); setDirezione('asc') }
   }
 
-  function aggiungiStudente() {
+  async function aggiungiStudente() {
     if (!nuovoNome || !nuovaEta || !nuovoCorso) { alert('Compila tutti i campi!'); return }
-    setStudenti([...studenti, { id: Date.now(), nome: nuovoNome, eta: Number(nuovaEta), corso: nuovoCorso }])
+    const res = await fetch('http://localhost:8080/studenti', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nome: nuovoNome, eta: Number(nuovaEta), corso: nuovoCorso }),
+    })
+    const nuovo = await res.json()
+    setStudenti([...studenti, nuovo])
     setNuovoNome(''); setNuovaEta(''); setNuovoCorso('')
   }
 
-  function eliminaStudente(id) { setStudenti(studenti.filter(s => s.id !== id)) }
+  async function eliminaStudente(id) {
+    await fetch(`http://localhost:8080/studenti/${id}`, { method: 'DELETE' })
+    setStudenti(studenti.filter(s => s.id !== id))
+  }
 
   const etaMedia = studenti.length > 0 ? Math.round(studenti.reduce((a, s) => a + s.eta, 0) / studenti.length) : 0
 
   const T = {
-    card: dark ? '#252839' : '#FFFFFF',
+    card:   dark ? '#252839' : '#FFFFFF',
     border: dark ? '#2E3248' : '#E2E8F0',
-    text: dark ? '#EEF0FF' : '#1C1F2E',
-    muted: dark ? '#4B5070' : '#8890B0',
-    input: dark ? '#1C1F2E' : '#F8FAFF',
+    text:   dark ? '#EEF0FF' : '#1C1F2E',
+    muted:  dark ? '#4B5070' : '#8890B0',
+    input:  dark ? '#1C1F2E' : '#F8FAFF',
   }
 
   const inputStyle = { width:'100%', padding:'11px 14px', background:T.input, border:`1px solid ${T.border}`, borderRadius:'10px', color:T.text, fontFamily:'Plus Jakarta Sans,sans-serif', fontSize:'14px', outline:'none' }
