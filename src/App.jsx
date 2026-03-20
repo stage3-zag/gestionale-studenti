@@ -41,7 +41,7 @@ export default function App() {
           ) : (
             <Routes>
               <Route path="/"             element={<ListaStudenti     studenti={studenti} setStudenti={setStudenti} dark={dark} toggleDark={() => setDark(d => !d)} />} />
-              <Route path="/studente/:id" element={<DettaglioStudente studenti={studenti} dark={dark} />} />
+              <Route path="/studente/:id" element={<DettaglioStudente studenti={studenti} setStudenti={setStudenti} dark={dark} />} />
             </Routes>
           )}
         </div>

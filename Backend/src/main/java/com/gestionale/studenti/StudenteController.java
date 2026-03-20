@@ -31,8 +31,12 @@ public class StudenteController {
 
     @PutMapping("/{id}")
     public Studente modificaStudente(@PathVariable Long id, @RequestBody Studente datiNuovi) {
-        repository.findById(id).orElseThrow();
-        Studente studente = new Studente(datiNuovi.getNome(), datiNuovi.getEta(), datiNuovi.getCorso());
+        Studente studente = repository.findById(id).orElseThrow();
+        studente.setNome(datiNuovi.getNome());
+        studente.setCognome(datiNuovi.getCognome());
+        studente.setDataNascita(datiNuovi.getDataNascita());
+        studente.setClasse(datiNuovi.getClasse());
+        studente.setVoti(datiNuovi.getVoti());
         return repository.save(studente);
     }
 }
